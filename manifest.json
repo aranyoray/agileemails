@@ -42,6 +42,7 @@
     }
   ],
   "options_page": "options.html",
+  "chrome_url_overrides": {},
   "web_accessible_resources": [
     {
       "resources": ["*.png", "*.svg"],

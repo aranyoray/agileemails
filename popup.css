@@ -270,6 +270,7 @@ body {
   gap: 8px;
 }
 
+.fast-btn,
 .settings-btn,
 .upgrade-btn {
   flex: 1;
@@ -281,6 +282,16 @@ body {
   font-size: 13px;
   font-weight: 500;
   transition: all 0.2s;
+}
+
+.fast-btn {
+  background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+  color: white;
+  border: none;
+}
+
+.fast-btn:hover {
+  opacity: 0.9;
 }
 
 .settings-btn:hover {
