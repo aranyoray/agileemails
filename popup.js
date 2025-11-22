@@ -100,8 +100,8 @@ function loadEmailQueue() {
       const emails = (data.emailData || []).filter(email => {
         if (!email.priority) return false;
         
-        // Exclude "other" category emails and non-human emails from reply queue
-        if (email.category === 'other' || email.isNonHuman) {
+        // Exclude "others" category emails and non-human emails from reply queue
+        if (email.category === 'others' || email.isNonHuman) {
           return false;
         }
         
@@ -165,8 +165,8 @@ function loadMissedEmails() {
 
       const emails = (data.emailData || []).filter(email => {
         if (!email.date) return false;
-        // Exclude "other" category and non-human emails
-        if (email.category === 'other' || email.isNonHuman) return false;
+        // Exclude "others" category and non-human emails
+        if (email.category === 'others' || email.isNonHuman) return false;
         
         try {
           const emailDate = new Date(email.date);
@@ -211,8 +211,8 @@ function loadTodayEmails() {
 
       const emails = (data.emailData || []).filter(email => {
         if (!email.date) return false;
-        // Exclude "other" category and non-human emails
-        if (email.category === 'other' || email.isNonHuman) return false;
+        // Exclude "others" category and non-human emails
+        if (email.category === 'others' || email.isNonHuman) return false;
         
         try {
           const emailDate = new Date(email.date);
@@ -253,9 +253,9 @@ function loadNonImportantEmails() {
   chrome.storage.local.get(['emailData', 'categories'], (data) => {
     try {
       const emails = (data.emailData || []).filter(email => {
-        // Include low priority emails (1-3) OR "other" category emails OR non-human emails
-        return (email.priority && email.priority <= 3) || 
-               email.category === 'other' || 
+        // Include low priority emails (1-3) OR "others" category emails OR non-human emails
+        return (email.priority && email.priority <= 3) ||
+               email.category === 'others' ||
                email.isNonHuman;
       });
 
