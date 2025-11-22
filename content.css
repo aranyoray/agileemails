@@ -69,9 +69,7 @@ tr[role="row"].agileemails-priority-3 {
 }
 
 .agileemails-priority-label {
-  font-size: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  display: none; /* Hidden - just show numbers now */
 }
 
 .agileemails-category-badge {

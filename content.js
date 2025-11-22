@@ -466,19 +466,11 @@ function applyVisualIndicators(emails, settings) {
       overlay.className = 'agileemails-overlay';
       
       const priorityColor = classifier.getPriorityColor(data.priority);
-      const priorityLabels = {
-        5: 'URGENT',
-        4: 'HIGH',
-        3: 'MEDIUM',
-        2: 'LOW',
-        1: 'LOW'
-      };
-      
-      // Build overlay content
+
+      // Build overlay content - just show number, no labels
       let overlayHTML = `
         <div class="agileemails-priority-indicator" style="background-color: ${priorityColor}">
           <span class="agileemails-priority-number">${data.priority}</span>
-          <span class="agileemails-priority-label">${priorityLabels[data.priority] || 'MEDIUM'}</span>
         </div>
       `;
       
@@ -570,7 +562,7 @@ function applyVisualIndicators(emails, settings) {
         if (subjectEl && !subjectEl.querySelector('.agileemails-priority-badge')) {
           const priorityBadge = document.createElement('span');
           priorityBadge.className = 'agileemails-priority-badge';
-          priorityBadge.textContent = `P${data.priority}`;
+          priorityBadge.textContent = `${data.priority}`;
           priorityBadge.style.cssText = `
             display: inline-block;
             padding: 1px 4px;
@@ -784,18 +776,11 @@ function applyOverlayToElement(element, emailData, settings) {
     overlay.setAttribute('data-email-id', emailData.id);
     
     const priorityColor = classifier.getPriorityColor(emailData.priority);
-    const priorityLabels = {
-      5: 'URGENT',
-      4: 'HIGH',
-      3: 'MEDIUM',
-      2: 'LOW',
-      1: 'LOW'
-    };
-    
+
+    // Just show number, no labels
     let overlayHTML = `
       <div class="agileemails-priority-indicator" style="background-color: ${priorityColor}">
         <span class="agileemails-priority-number">${emailData.priority}</span>
-        <span class="agileemails-priority-label">${priorityLabels[emailData.priority] || 'MEDIUM'}</span>
       </div>
     `;
     

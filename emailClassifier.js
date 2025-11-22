@@ -21,7 +21,11 @@ class EmailClassifier {
           'review', 'code review', 'pr review', 'pull request', 'merge', 'deploy',
           'sprint planning', 'retrospective', 'retro', 'all hands', 'all-hands',
           'slack', 'jira', 'confluence', 'trello', 'asana', 'notion',
-          'follow up', 'follow-up', 'action items', 'action item', 'todo', 'to-do'
+          'follow up', 'follow-up', 'action items', 'action item', 'todo', 'to-do',
+          // Business/startup related
+          'incubator', 'incubation', 'accelerator', 'investment', 'investor', 'investors',
+          'funding', 'pitch', 'startup', 'venture', 'vc', 'angel investor', 'seed', 'series a',
+          'portfolio', 'partnership', 'business development', 'biz dev'
         ],
         priority: 4
       },
@@ -53,6 +57,8 @@ class EmailClassifier {
           // Financial services
           'paypal', 'stripe', 'venmo', 'zelle', 'cash app', 'square', 'chase', 'bank of america',
           'wells fargo', 'citi', 'american express', 'amex', 'discover', 'capital one',
+          // Ride services receipts
+          'uber', 'lyft', 'doordash', 'grubhub', 'instacart',
           // Bills & utilities
           'bill', 'billing', 'utility', 'electric', 'gas', 'water', 'phone bill', 'internet bill',
           // Financial alerts
@@ -141,6 +147,13 @@ class EmailClassifier {
 
     // Check for newsletter patterns (subject + sender only)
     isNewsletter = this.isNewsletterQuick(from, subject);
+
+    // Also check body for unsubscribe footer (strong newsletter indicator)
+    const body = email.body?.toLowerCase() || '';
+    if (!isNewsletter && this.hasUnsubscribeFooter(body)) {
+      isNewsletter = true;
+    }
+
     if (isNewsletter && !subject.includes('invoice') && !subject.includes('payment') && !subject.includes('receipt')) {
       return {
         category: 'newsletter',
@@ -318,6 +331,25 @@ class EmailClassifier {
     return newsletterIndicators.some(indicator => from.includes(indicator) || subject.includes(indicator));
   }
 
+  // Check if email body has unsubscribe footer (indicates newsletter/mass email)
+  hasUnsubscribeFooter(body) {
+    if (!body) return false;
+    const lowerBody = body.toLowerCase();
+    // Check for common unsubscribe patterns typically found in footers
+    const unsubscribePatterns = [
+      'unsubscribe',
+      'opt out',
+      'opt-out',
+      'manage preferences',
+      'email preferences',
+      'update preferences',
+      'click here to unsubscribe',
+      'to stop receiving',
+      'remove from list'
+    ];
+    return unsubscribePatterns.some(pattern => lowerBody.includes(pattern));
+  }
+
   isNonHumanEmail(email) {
     // Use quick check first (subject + sender only)
     const from = email.from?.toLowerCase() || '';
@@ -356,7 +388,10 @@ class EmailClassifier {
     // Use quick check (subject + sender only)
     const from = email.from?.toLowerCase() || '';
     const subject = email.subject?.toLowerCase() || '';
-    return this.isNewsletterQuick(from, subject);
+    const body = email.body?.toLowerCase() || '';
+
+    // Check both quick indicators and unsubscribe footer
+    return this.isNewsletterQuick(from, subject) || this.hasUnsubscribeFooter(body);
   }
 
   adjustPriorityByHistory(email, currentPriority) {
