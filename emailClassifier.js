@@ -369,11 +369,22 @@ class EmailClassifier {
     const colors = {
       5: '#FF0000', // Red - urgent
       4: '#FF8C00', // Orange - high
-      3: '#FFD700', // Yellow - medium-high
-      2: '#90EE90', // Light green - medium
+      3: '#FFD700', // Yellow - medium
+      2: '#90EE90', // Light green - normal
       1: '#006400'  // Dark green - low
     };
     return colors[priority] || colors[1];
+  }
+
+  getPriorityLabel(priority) {
+    const labels = {
+      1: 'Low',
+      2: 'Normal',
+      3: 'Medium',
+      4: 'High',
+      5: 'Urgent'
+    };
+    return labels[priority] || 'Low';
   }
 
   extractImportantInfo(email) {
