@@ -285,9 +285,10 @@ function createEmailCard(email, categories) {
       console.error('AgileEmails: Classifier not available');
       return '';
     }
-    
+
     const priority = email.priority || 1;
     const priorityColor = classifier.getPriorityColor(priority);
+    const priorityLabel = classifier.getPriorityLabel(priority);
     const categoryColor = categories?.[email.category]?.color || '#808080';
     const categoryName = email.category ? email.category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'OTHER';
 
@@ -308,7 +309,7 @@ function createEmailCard(email, categories) {
           </div>
         ` : ''}
         <div class="email-footer">
-          <span class="priority-label">Priority ${priority}/5</span>
+          <span class="priority-label">${priority} ${priorityLabel}</span>
           ${email.isNewsletter ? '<span class="newsletter-badge">📧 Newsletter</span>' : ''}
           ${email.isDND ? '<span class="dnd-badge">🔕 DND</span>' : ''}
         </div>

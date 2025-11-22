@@ -466,11 +466,19 @@ function applyVisualIndicators(emails, settings) {
       overlay.className = 'agileemails-overlay';
       
       const priorityColor = classifier.getPriorityColor(data.priority);
+      const priorityLabels = {
+        1: 'Low',
+        2: 'Normal',
+        3: 'Medium',
+        4: 'High',
+        5: 'Urgent'
+      };
 
-      // Build overlay content - just show number, no labels
+      // Build overlay content
       let overlayHTML = `
         <div class="agileemails-priority-indicator" style="background-color: ${priorityColor}">
           <span class="agileemails-priority-number">${data.priority}</span>
+          <span class="agileemails-priority-label">${priorityLabels[data.priority] || 'Low'}</span>
         </div>
       `;
       
@@ -776,11 +784,18 @@ function applyOverlayToElement(element, emailData, settings) {
     overlay.setAttribute('data-email-id', emailData.id);
     
     const priorityColor = classifier.getPriorityColor(emailData.priority);
+    const priorityLabels = {
+      1: 'Low',
+      2: 'Normal',
+      3: 'Medium',
+      4: 'High',
+      5: 'Urgent'
+    };
 
-    // Just show number, no labels
     let overlayHTML = `
       <div class="agileemails-priority-indicator" style="background-color: ${priorityColor}">
         <span class="agileemails-priority-number">${emailData.priority}</span>
+        <span class="agileemails-priority-label">${priorityLabels[emailData.priority] || 'Low'}</span>
       </div>
     `;
     
@@ -873,11 +888,11 @@ function showThreadSummary(emailData, element) {
 
     const priorityColor = classifier.getPriorityColor(emailData.priority);
     const priorityLabels = {
-      5: 'Urgent',
-      4: 'High',
+      1: 'Low',
+      2: 'Normal',
       3: 'Medium',
-      2: 'Low',
-      1: 'Low'
+      4: 'High',
+      5: 'Urgent'
     };
 
     let summaryHTML = `
