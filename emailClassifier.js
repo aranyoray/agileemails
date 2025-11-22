@@ -3,9 +3,9 @@
 class EmailClassifier {
   constructor() {
     this.categories = {
-      'school': {
+      'academics': {
         keywords: [
-          'university', 'college', 'professor', 'prof', 'assignment', 'homework', 'course', 
+          'university', 'college', 'professor', 'prof', 'assignment', 'homework', 'course',
           'syllabus', 'campus', 'edu', 'education', 'student', 'class', 'lecture',
           'exam', 'test', 'quiz', 'midterm', 'final', 'grade', 'grades', 'gpa',
           'registration', 'enrollment', 'tuition', 'financial aid', 'scholarship',
@@ -14,7 +14,7 @@ class EmailClassifier {
         domains: ['edu', 'school', 'university', 'college'],
         priority: 3
       },
-      'work-current': {
+      'work': {
         keywords: [
           'team', 'meeting', 'project', 'deadline', 'urgent', 'asap', 'standup', 'sprint',
           'stand-up', 'stand up', 'sync', 'sync up', '1:1', 'one-on-one', 'one on one',
@@ -25,7 +25,7 @@ class EmailClassifier {
         ],
         priority: 4
       },
-      'work-opportunities': {
+      'jobs': {
         keywords: [
           'opportunity', 'job', 'position', 'recruiter', 'hiring', 'career', 'interview', 'linkedin',
           'job opening', 'job opportunity', 'we are hiring', 'we\'re hiring', 'hiring now',
@@ -72,12 +72,12 @@ class EmailClassifier {
         ],
         priority: 2
       },
-      'auth-codes': {
+      'auth': {
         keywords: ['verification code', 'security code', 'login code', 'one-time', 'otp', '2fa'],
         priority: 1,
         autoDelete: 1
       },
-      'promo': {
+      'newsletter': {
         keywords: [
           'sale', 'discount', 'offer', 'deal', 'promo', 'coupon', 'subscribe', 'unsubscribe',
           'limited time', 'limited-time', 'act now', 'buy now', 'shop now', 'order now',
@@ -111,7 +111,7 @@ class EmailClassifier {
     const senderName = from.split('@')[0]?.toLowerCase() || '';
     
     // Progressive classification: start with subject + sender only
-    let bestCategory = 'other';
+    let bestCategory = 'others';
     let bestScore = 0;
     let priority = 1;
     let isNewsletter = false;
@@ -121,7 +121,7 @@ class EmailClassifier {
     // Check for non-human emails FIRST (no-reply, bots, automated)
     if (this.isNonHumanEmailQuick(from, subject)) {
       return {
-        category: 'other',
+        category: 'others',
         priority: 1,
         isNewsletter: false,
         confidence: 20,
@@ -132,7 +132,7 @@ class EmailClassifier {
     // Check for auth codes (subject only)
     if (/\b\d{4,8}\b/.test(subject) && (subject.includes('code') || subject.includes('verify'))) {
       return {
-        category: 'auth-codes',
+        category: 'auth',
         priority: 1,
         isNewsletter: false,
         confidence: 15
@@ -143,7 +143,7 @@ class EmailClassifier {
     isNewsletter = this.isNewsletterQuick(from, subject);
     if (isNewsletter && !subject.includes('invoice') && !subject.includes('payment') && !subject.includes('receipt')) {
       return {
-        category: 'promo',
+        category: 'newsletter',
         priority: 1,
         isNewsletter: true,
         confidence: 10
@@ -215,7 +215,7 @@ class EmailClassifier {
     }
 
     // Automated/non-human emails should always be priority 1 (low urgency for replies)
-    if (email.isNonHuman || bestCategory === 'other') {
+    if (email.isNonHuman || bestCategory === 'others') {
       priority = 1;
     } else {
       // Only boost priority if it's not "other" category
@@ -230,8 +230,8 @@ class EmailClassifier {
     priority = this.adjustPriorityByHistory(email, priority);
 
     // Ensure non-human emails are always priority 1
-    const finalPriority = (email.isNonHuman || bestCategory === 'other') 
-      ? 1 
+    const finalPriority = (email.isNonHuman || bestCategory === 'others')
+      ? 1
       : Math.max(1, Math.min(5, Math.round(priority)));
     
     return {
@@ -245,13 +245,13 @@ class EmailClassifier {
 
   // Fast classification using only provided text (subject + optional body lines)
   classifyWithText(from, subject, bodyText, emailDomain, senderName) {
-    let bestCategory = 'other';
+    let bestCategory = 'others';
     let bestScore = 0;
     let priority = 1;
     const text = `${from} ${subject} ${bodyText}`;
 
     for (const [category, config] of Object.entries(this.categories)) {
-      if (category === 'auth-codes' || category === 'promo') continue;
+      if (category === 'auth' || category === 'newsletter') continue;
       
       let score = 0;
 

@@ -189,4 +189,84 @@ tr[role="row"]:hover .agileemails-overlay {
   color: #333;
 }
 
+/* New summary popup styles */
+.agileemails-summary-popup .summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.agileemails-summary-popup .summary-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.agileemails-summary-popup .summary-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #999;
+  padding: 0;
+  line-height: 1;
+}
+
+.agileemails-summary-popup .summary-close:hover {
+  color: #333;
+}
+
+.agileemails-summary-popup .summary-content {
+  font-size: 12px;
+}
+
+.agileemails-summary-popup .summary-section {
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.agileemails-summary-popup .summary-section strong {
+  color: #555;
+}
+
+.agileemails-summary-popup .summary-section ul {
+  margin: 4px 0 0 0;
+  padding-left: 20px;
+}
+
+.agileemails-summary-popup .summary-section li {
+  margin-bottom: 3px;
+  color: #444;
+}
+
+.agileemails-summary-popup .summary-section a {
+  color: #1a73e8;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.agileemails-summary-popup .summary-section a:hover {
+  text-decoration: underline;
+}
+
+.agileemails-summary-popup .summary-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  margin-top: 8px;
+  margin-right: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  background: #e3f2fd;
+  color: #1976d2;
+  border-radius: 3px;
+}
+
+.agileemails-summary-popup .summary-badge.dnd {
+  background: #fff3e0;
+  color: #e65100;
+}
 

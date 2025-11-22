@@ -149,7 +149,6 @@ function init() {
   }, { passive: true });
   
   // Check on mouseover (immediate)
-  const mainArea = document.querySelector('div[role="main"]') || document.body;
   mainArea.addEventListener('mouseover', (e) => {
     const emailRow = e.target.closest('tr[role="row"]');
     if (emailRow && !emailRow.querySelector('.agileemails-overlay')) {
@@ -328,7 +327,7 @@ async function processEmail(email, settings) {
     
     // Ensure non-human emails are always priority 1 (low urgency for replies)
     let finalPriority = classification.priority;
-    if (isNonHuman || classification.isNonHuman || classification.category === 'other') {
+    if (isNonHuman || classification.isNonHuman || classification.category === 'others') {
       finalPriority = 1;
     }
     
@@ -865,6 +864,173 @@ function applyOverlayToElement(element, emailData, settings) {
     console.error('AgileEmails: Error applying overlay to element', error);
   }
 }
+
+// Thread summarization popup
+function showThreadSummary(emailData, element) {
+  // Remove any existing summary popup
+  const existingPopup = document.querySelector('.agileemails-summary-popup');
+  if (existingPopup) {
+    existingPopup.remove();
+  }
+
+  // Check if thread summary is enabled
+  chrome.storage.local.get(['settings', 'pricingTier'], (data) => {
+    const settings = data.settings || {};
+    const tier = data.pricingTier || 'free';
+
+    // Thread summary only available for recommended and ultra tiers
+    if (tier === 'free' || settings.enableThreadSummary === false) {
+      return;
+    }
+
+    const popup = document.createElement('div');
+    popup.className = 'agileemails-summary-popup';
+
+    const priorityColor = classifier.getPriorityColor(emailData.priority);
+    const priorityLabels = {
+      5: 'Urgent',
+      4: 'High',
+      3: 'Medium',
+      2: 'Low',
+      1: 'Low'
+    };
+
+    let summaryHTML = `
+      <div class="summary-header">
+        <h3>Thread Summary</h3>
+        <button class="summary-close">&times;</button>
+      </div>
+      <div class="summary-content">
+        <div class="summary-section">
+          <strong>Subject:</strong> ${escapeHtmlContent(emailData.subject || 'No subject')}
+        </div>
+        <div class="summary-section">
+          <strong>From:</strong> ${escapeHtmlContent(emailData.from || 'Unknown')}
+        </div>
+        <div class="summary-section">
+          <strong>Priority:</strong>
+          <span style="color: ${priorityColor}; font-weight: bold;">
+            ${emailData.priority}/5 (${priorityLabels[emailData.priority] || 'Medium'})
+          </span>
+        </div>
+        <div class="summary-section">
+          <strong>Category:</strong> ${escapeHtmlContent(emailData.category ? emailData.category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Others')}
+        </div>
+    `;
+
+    // Add important info if available
+    if (emailData.importantInfo) {
+      if (emailData.importantInfo.dates && emailData.importantInfo.dates.length > 0) {
+        summaryHTML += `
+          <div class="summary-section">
+            <strong>Dates mentioned:</strong>
+            <ul>${emailData.importantInfo.dates.slice(0, 5).map(d => `<li>${escapeHtmlContent(d)}</li>`).join('')}</ul>
+          </div>
+        `;
+      }
+
+      if (emailData.importantInfo.money && emailData.importantInfo.money.length > 0) {
+        summaryHTML += `
+          <div class="summary-section">
+            <strong>Amounts mentioned:</strong>
+            <ul>${emailData.importantInfo.money.slice(0, 5).map(m => `<li>${escapeHtmlContent(m)}</li>`).join('')}</ul>
+          </div>
+        `;
+      }
+
+      if (emailData.importantInfo.links && emailData.importantInfo.links.length > 0) {
+        summaryHTML += `
+          <div class="summary-section">
+            <strong>Links:</strong>
+            <ul>${emailData.importantInfo.links.slice(0, 3).map(l => `<li><a href="${escapeHtmlContent(l)}" target="_blank">${escapeHtmlContent(l.substring(0, 50))}${l.length > 50 ? '...' : ''}</a></li>`).join('')}</ul>
+          </div>
+        `;
+      }
+
+      if (emailData.importantInfo.tasks && emailData.importantInfo.tasks.length > 0) {
+        summaryHTML += `
+          <div class="summary-section">
+            <strong>Action items:</strong>
+            <ul>${emailData.importantInfo.tasks.slice(0, 5).map(t => `<li>${escapeHtmlContent(t.trim())}</li>`).join('')}</ul>
+          </div>
+        `;
+      }
+    }
+
+    // Add indicators
+    if (emailData.isNewsletter) {
+      summaryHTML += '<div class="summary-badge">Newsletter</div>';
+    }
+    if (emailData.isDND) {
+      summaryHTML += '<div class="summary-badge dnd">DND Active</div>';
+    }
+
+    summaryHTML += '</div>';
+    popup.innerHTML = summaryHTML;
+
+    // Position popup near the element
+    const rect = element.getBoundingClientRect();
+    popup.style.cssText = `
+      position: fixed;
+      top: ${Math.min(rect.top, window.innerHeight - 400)}px;
+      left: ${Math.min(rect.right + 10, window.innerWidth - 320)}px;
+      z-index: 10000;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      width: 300px;
+      max-height: 380px;
+      overflow-y: auto;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+    `;
+
+    document.body.appendChild(popup);
+
+    // Add close button handler
+    popup.querySelector('.summary-close').addEventListener('click', () => {
+      popup.remove();
+    });
+
+    // Close on click outside
+    const closeOnClickOutside = (e) => {
+      if (!popup.contains(e.target) && !element.contains(e.target)) {
+        popup.remove();
+        document.removeEventListener('click', closeOnClickOutside);
+      }
+    };
+    setTimeout(() => {
+      document.addEventListener('click', closeOnClickOutside);
+    }, 100);
+  });
+}
+
+// Helper function to escape HTML content
+function escapeHtmlContent(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// Add click handler for thread summary
+function setupThreadSummaryHandler() {
+  document.addEventListener('dblclick', (e) => {
+    const emailRow = e.target.closest('tr[role="row"]');
+    if (emailRow) {
+      const emailId = emailRow.getAttribute('data-agileemails-id') ||
+                      emailRow.getAttribute('data-thread-perm-id');
+      if (emailId && emailCache.has(emailId)) {
+        e.preventDefault();
+        showThreadSummary(emailCache.get(emailId), emailRow);
+      }
+    }
+  });
+}
+
+// Initialize thread summary handler
+setupThreadSummaryHandler();
 
 // Listen for messages from background
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

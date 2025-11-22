@@ -17,14 +17,14 @@ async function scheduleProcessEmailsAlarm() {
 chrome.runtime.onInstalled.addListener(async () => {
   await chrome.storage.local.set({
     categories: {
-      'school': { enabled: true, color: '#4A90E2', autoDelete: null },
-      'work-current': { enabled: true, color: '#E24A4A', autoDelete: null },
-      'work-opportunities': { enabled: true, color: '#E2A44A', autoDelete: null },
+      'academics': { enabled: true, color: '#4A90E2', autoDelete: null },
+      'work': { enabled: true, color: '#E24A4A', autoDelete: null },
+      'jobs': { enabled: true, color: '#E2A44A', autoDelete: null },
       'finance': { enabled: true, color: '#4AE24A', autoDelete: null },
       'personal': { enabled: true, color: '#E24AE2', autoDelete: null },
-      'auth-codes': { enabled: true, color: '#A4A4A4', autoDelete: 1 },
-      'promo': { enabled: true, color: '#FFB84D', autoDelete: 1 },
-      'other': { enabled: true, color: '#808080', autoDelete: null }
+      'auth': { enabled: true, color: '#A4A4A4', autoDelete: 1 },
+      'newsletter': { enabled: true, color: '#FFB84D', autoDelete: 1 },
+      'others': { enabled: true, color: '#808080', autoDelete: null }
     },
     dndRules: [],
     pricingTier: 'free',
