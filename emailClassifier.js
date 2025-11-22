@@ -73,7 +73,13 @@ class EmailClassifier {
         priority: 2
       },
       'auth': {
-        keywords: ['verification code', 'security code', 'login code', 'one-time', 'otp', '2fa'],
+        keywords: [
+          'verification code', 'security code', 'login code', 'one-time', 'one time', 'otp', '2fa',
+          'verify your', 'confirm your', 'verification', 'authenticate', 'authentication code',
+          'passcode', 'temporary password', 'reset password', 'password reset', 'sign in code',
+          'sign-in code', 'access code', 'confirmation code', 'verify email', 'confirm email',
+          'activate your account', 'account activation', 'email verification'
+        ],
         priority: 1,
         autoDelete: 1
       },
@@ -129,8 +135,19 @@ class EmailClassifier {
       };
     }
 
-    // Check for auth codes (subject only)
-    if (/\b\d{4,8}\b/.test(subject) && (subject.includes('code') || subject.includes('verify'))) {
+    // Check for auth codes (subject only) - expanded patterns
+    const authPatterns = [
+      /\b\d{4,8}\b/, // numeric codes
+      /otp/i, /one.?time/i, /verification/i, /verify/i, /confirm/i,
+      /passcode/i, /2fa/i, /authentication/i, /security code/i,
+      /sign.?in code/i, /access code/i, /reset.*password/i, /password.*reset/i,
+      /activate.*account/i, /account.*activation/i
+    ];
+    const isAuthEmail = authPatterns.some(pattern => pattern.test(subject));
+    if (isAuthEmail && (subject.includes('code') || subject.includes('verify') ||
+        subject.includes('otp') || subject.includes('confirm') ||
+        subject.includes('reset') || subject.includes('activation') ||
+        /\b\d{4,8}\b/.test(subject))) {
       return {
         category: 'auth',
         priority: 1,
@@ -207,13 +224,16 @@ class EmailClassifier {
     }
 
     // Adjust priority based on urgency (subject only for speed)
-    const subjectUrgent = this.urgentKeywords.some(kw => subject.includes(kw.toLowerCase()));
-    const subjectImportant = this.importantKeywords.some(kw => subject.includes(kw.toLowerCase()));
-    
-    if (subjectUrgent) {
-      priority = Math.min(5, priority + 2);
-    } else if (subjectImportant) {
-      priority = Math.min(5, priority + 1);
+    // BUT NOT for auth/newsletter - these should always stay low priority
+    if (bestCategory !== 'auth' && bestCategory !== 'newsletter') {
+      const subjectUrgent = this.urgentKeywords.some(kw => subject.includes(kw.toLowerCase()));
+      const subjectImportant = this.importantKeywords.some(kw => subject.includes(kw.toLowerCase()));
+
+      if (subjectUrgent) {
+        priority = Math.min(5, priority + 2);
+      } else if (subjectImportant) {
+        priority = Math.min(5, priority + 1);
+      }
     }
 
     // Automated/non-human emails should always be priority 1 (low urgency for replies)
@@ -231,8 +251,8 @@ class EmailClassifier {
 
     priority = this.adjustPriorityByHistory(email, priority);
 
-    // Ensure non-human emails are always priority 1
-    const finalPriority = (email.isNonHuman || bestCategory === 'others')
+    // Ensure non-human, auth, and newsletter emails are always priority 1
+    const finalPriority = (email.isNonHuman || bestCategory === 'others' || bestCategory === 'auth' || bestCategory === 'newsletter')
       ? 1
       : Math.max(1, Math.min(5, Math.round(priority)));
     
@@ -253,7 +273,8 @@ class EmailClassifier {
     const text = `${from} ${subject} ${bodyText}`;
 
     for (const [category, config] of Object.entries(this.categories)) {
-      if (category === 'auth' || category === 'newsletter') continue;
+      // Allow auth to be detected via keywords, skip newsletter (detected separately)
+      if (category === 'newsletter') continue;
       
       let score = 0;
 
@@ -317,6 +338,40 @@ class EmailClassifier {
     // Only consider it a newsletter if 'unsubscribe' appears in the body
     // This catches mass marketing emails but not school/work newsletters that may need replies
     return body.toLowerCase().includes('unsubscribe');
+  // Quick newsletter check using only sender and subject
+  isNewsletterQuick(from, subject) {
+    const newsletterIndicators = [
+      // Direct newsletter indicators
+      'unsubscribe', 'newsletter', 'noreply', 'no-reply', 'donotreply', 'do-not-reply',
+      'mailing list', 'weekly digest', 'daily digest', 'monthly digest',
+      // Marketing platforms
+      'mailchimp', 'constant contact', 'sendgrid', 'mailgun', 'sendinblue', 'hubspot',
+      'klaviyo', 'marketo', 'pardot', 'drip', 'convertkit', 'aweber',
+      // Promotional language
+      'sale', 'discount', '% off', 'percent off', 'limited time', 'act now',
+      'buy now', 'shop now', 'order now', 'deal', 'promo', 'coupon',
+      'free shipping', 'flash sale', 'clearance', 'exclusive offer', 'special offer',
+      // News/content updates
+      'weekly update', 'monthly update', 'news update', 'product update',
+      'what\'s new', 'new arrivals', 'trending', 'top stories', 'highlights'
+    ];
+
+    // Check sender domain for known newsletter/marketing services
+    const emailDomain = from.split('@')[1]?.toLowerCase() || '';
+    const newsletterDomains = [
+      'mailchimp.com', 'mail.mailchimp.com', 'constantcontact.com', 'sendgrid.net',
+      'mailgun.org', 'sendinblue.com', 'hubspot.com', 'klaviyo.com', 'marketo.com',
+      'pardot.com', 'drip.com', 'convertkit.com', 'aweber.com', 'getresponse.com',
+      'campaignmonitor.com', 'emma.com', 'substack.com', 'beehiiv.com',
+      'list-manage.com', 'createsend.com', 'cmail', 'email.', 'mailer.', 'news.',
+      'newsletter.', 'updates.', 'promo.', 'marketing.', 'campaigns.'
+    ];
+
+    if (newsletterDomains.some(domain => emailDomain.includes(domain) || emailDomain.startsWith(domain.replace('.', '')))) {
+      return true;
+    }
+
+    return newsletterIndicators.some(indicator => from.includes(indicator) || subject.includes(indicator));
   }
 
   isNonHumanEmail(email) {
