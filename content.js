@@ -615,10 +615,60 @@ function reorderEmailsByPriority(emailElements) {
   try {
     // Don't reorder if there are too few emails (not worth it)
     if (emailElements.length < 3) return;
-    
-    // Sort by priority (descending), then by date
+
+    // Helper to check if email is within last 48 hours
+    const now = new Date();
+    const fortyEightHoursAgo = now.getTime() - (48 * 60 * 60 * 1000);
+
+    const isWithin48Hours = (emailData) => {
+      if (!emailData.date) return true; // If no date, assume recent
+
+      // Parse Gmail date formats
+      const dateStr = emailData.date;
+      let emailDate;
+
+      // Try parsing common Gmail date formats
+      if (dateStr.includes(':')) {
+        // Today's emails show time like "10:30 AM"
+        emailDate = now;
+      } else if (dateStr.match(/^[A-Za-z]{3}\s+\d{1,2}$/)) {
+        // Recent emails show "Nov 20" format
+        const year = now.getFullYear();
+        emailDate = new Date(`${dateStr}, ${year}`);
+      } else {
+        // Older emails show full date
+        emailDate = new Date(dateStr);
+      }
+
+      return !isNaN(emailDate.getTime()) && emailDate.getTime() >= fortyEightHoursAgo;
+    };
+
+    // Priority categories for urgent reply queue
+    const urgentCategories = ['academics', 'work', 'jobs'];
+
+    // Sort with academics, work, jobs first (for emails within 48 hours)
     emailElements.sort((a, b) => {
-      // Higher priority first
+      const aRecent = isWithin48Hours(a.data);
+      const bRecent = isWithin48Hours(b.data);
+
+      // For recent emails, prioritize urgent categories
+      if (aRecent && bRecent) {
+        const aIsUrgent = urgentCategories.includes(a.data.category);
+        const bIsUrgent = urgentCategories.includes(b.data.category);
+
+        // Urgent categories first
+        if (aIsUrgent && !bIsUrgent) return -1;
+        if (!aIsUrgent && bIsUrgent) return 1;
+
+        // Within urgent categories, sort by specific order
+        if (aIsUrgent && bIsUrgent) {
+          const aIndex = urgentCategories.indexOf(a.data.category);
+          const bIndex = urgentCategories.indexOf(b.data.category);
+          if (aIndex !== bIndex) return aIndex - bIndex;
+        }
+      }
+
+      // Then by priority (descending)
       if (b.data.priority !== a.data.priority) {
         return b.data.priority - a.data.priority;
       }
