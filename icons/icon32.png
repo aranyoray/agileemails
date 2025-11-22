@@ -1,0 +1,33 @@
+# AgileEmails Icon - 128x128 PNG
+# This is a placeholder file. To create the actual PNG icon:
+
+# 1. Use the provided icon128.svg file as a template
+# 2. Convert it to PNG format using one of these methods:
+
+# Online Converters:
+# - https://convertio.co/svg-png/
+# - https://cloudconvert.com/svg-to-png
+# - https://www.freeconvert.com/svg-to-png
+
+# Desktop Software:
+# - Adobe Illustrator
+# - Inkscape (free)
+# - GIMP (free)
+# - Preview (macOS)
+
+# Command Line (if available):
+# - ImageMagick: convert icon128.svg icon128.png
+# - Inkscape: inkscape icon128.svg --export-png=icon128.png
+
+# The icon design includes:
+# - Gradient background (purple to blue)
+# - Email envelope icon
+# - Task board with three columns
+# - Green checkmark for completed tasks
+# - Clean, modern design suitable for Chrome extension
+
+# After creating the PNG, resize it to the required sizes:
+# - 16x16 pixels for icon16.png
+# - 32x32 pixels for icon32.png  
+# - 48x48 pixels for icon48.png
+# - 128x128 pixels for icon128.png

@@ -1,0 +1,192 @@
+/* Styles for Gmail integration */
+.agileemails-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  margin-left: 8px;
+  font-size: 10px;
+  font-weight: bold;
+  border-radius: 3px;
+  color: white;
+  vertical-align: middle;
+}
+
+/* Priority color borders */
+tr[role="row"] {
+  transition: border-left 0.2s ease;
+  position: relative;
+}
+
+/* Priority-specific styling */
+tr[role="row"].agileemails-priority-5 {
+  background-color: rgba(255, 0, 0, 0.05) !important;
+}
+
+tr[role="row"].agileemails-priority-4 {
+  background-color: rgba(255, 140, 0, 0.05) !important;
+}
+
+tr[role="row"].agileemails-priority-3 {
+  background-color: rgba(255, 215, 0, 0.03) !important;
+}
+
+/* Overlay with urgency info */
+.agileemails-overlay {
+  position: absolute !important;
+  top: 2px !important;
+  right: 8px !important;
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 6px;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-bottom-left-radius: 4px;
+  box-shadow: -1px 1px 3px rgba(0, 0, 0, 0.1);
+  z-index: 10000 !important; /* Very high z-index to stay on top */
+  font-size: 10px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: calc(100% - 16px);
+  overflow: hidden;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.agileemails-priority-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: white;
+  font-weight: bold;
+  font-size: 9px;
+}
+
+.agileemails-priority-number {
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.agileemails-priority-label {
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.agileemails-category-badge {
+  display: inline-block;
+  padding: 2px 5px;
+  border-radius: 2px;
+  color: white;
+  font-size: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.agileemails-info-items {
+  display: inline-block;
+  color: #666;
+  font-size: 9px;
+  padding: 2px 4px;
+}
+
+.agileemails-newsletter-badge,
+.agileemails-dnd-badge {
+  display: inline-block;
+  padding: 2px 4px;
+  font-size: 8px;
+  color: #666;
+  background: #f0f0f0;
+  border-radius: 2px;
+}
+
+.agileemails-priority-badge {
+  display: inline-block;
+  padding: 1px 4px;
+  margin-left: 6px;
+  font-size: 9px;
+  font-weight: bold;
+  border-radius: 2px;
+  color: white;
+  vertical-align: middle;
+}
+
+/* DND mode styling */
+tr[role="row"].agileemails-dnd {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* Ensure overlay doesn't interfere with Gmail's layout */
+tr[role="row"]:hover .agileemails-overlay {
+  background: rgba(255, 255, 255, 0.98);
+}
+
+/* Thread summary popup */
+.agileemails-summary-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 350px;
+  max-height: 400px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 10000;
+  padding: 16px;
+  overflow-y: auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.agileemails-summary-popup h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.agileemails-summary-popup .info-section {
+  margin-bottom: 16px;
+}
+
+.agileemails-summary-popup .info-section h4 {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+}
+
+.agileemails-summary-popup .info-item {
+  padding: 4px 0;
+  font-size: 12px;
+  color: #444;
+}
+
+.agileemails-summary-popup .info-item a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+.agileemails-summary-popup .info-item a:hover {
+  text-decoration: underline;
+}
+
+.agileemails-summary-popup .close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+  padding: 4px 8px;
+}
+
+.agileemails-summary-popup .close-btn:hover {
+  color: #333;
+}
+
+

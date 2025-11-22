@@ -1,0 +1,21 @@
+{
+  "name": "agileemails",
+  "version": "1.0.0",
+  "description": "AgileEmails - Smart Email Management Chrome Extension",
+  "scripts": {
+    "build": "echo 'No build step required'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/minicompetitioncom-rgbf/AgileEmails.git"
+  },
+  "keywords": [
+    "chrome-extension",
+    "email",
+    "gmail",
+    "productivity"
+  ],
+  "author": "AgileEmails",
+  "license": "PROPRIETARY"
+}
+

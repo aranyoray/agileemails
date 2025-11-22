@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgileEmails Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>AgileEmails Settings</h1>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="pricing">Pricing</button>
+      <button class="tab-btn" data-tab="categories">Categories</button>
+      <button class="tab-btn" data-tab="dnd">DND Mode</button>
+      <button class="tab-btn" data-tab="auto-delete">Auto-Delete</button>
+      <button class="tab-btn" data-tab="general">General</button>
+    </div>
+
+    <!-- Pricing Tab -->
+    <div class="tab-content active" id="pricing-tab">
+      <div class="section">
+        <h2>Choose Your Plan</h2>
+        <div class="pricing-cards">
+          <div class="pricing-card" data-tier="free">
+            <div class="card-header">
+              <h3>Free</h3>
+              <div class="price">$0<span>/month</span></div>
+            </div>
+            <ul class="features">
+              <li>✓ 1 week context window</li>
+              <li>✓ Basic categorization</li>
+              <li>✓ Priority scoring (1-5)</li>
+              <li>✗ No ads</li>
+            </ul>
+            <button class="select-btn" data-select="free">Current Plan</button>
+          </div>
+
+          <div class="pricing-card recommended" data-tier="recommended">
+            <div class="card-header">
+              <h3>Recommended</h3>
+              <div class="price">$4.99<span>/month</span></div>
+            </div>
+            <ul class="features">
+              <li>✓ Unlimited context window</li>
+              <li>✓ Advanced categorization</li>
+              <li>✓ DND mode with exceptions</li>
+              <li>✓ Auto-delete rules</li>
+              <li>✓ Thread summarization</li>
+              <li>✓ Calendar integration</li>
+              <li>✗ No ads</li>
+            </ul>
+            <button class="select-btn" data-select="recommended">Select Plan</button>
+          </div>
+
+          <div class="pricing-card" data-tier="ultra">
+            <div class="card-header">
+              <h3>Ultra</h3>
+              <div class="price">$9.99<span>/month</span></div>
+            </div>
+            <ul class="features">
+              <li>✓ Everything in Recommended</li>
+              <li>✓ Smart global search</li>
+              <li>✓ Chat with your emails</li>
+              <li>✓ OCR for attachments</li>
+              <li>✓ Priority support</li>
+              <li>✗ No ads</li>
+            </ul>
+            <button class="select-btn" data-select="ultra">Select Plan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categories Tab -->
+    <div class="tab-content" id="categories-tab">
+      <div class="section">
+        <h2>Email Categories</h2>
+        <p class="description">Customize how emails are categorized and their auto-delete settings.</p>
+        <div class="category-list" id="categoryList">
+          <!-- Categories will be populated by JS -->
+        </div>
+        <button class="save-btn" id="saveCategories">Save Categories</button>
+      </div>
+    </div>
+
+    <!-- DND Mode Tab -->
+    <div class="tab-content" id="dnd-tab">
+      <div class="section">
+        <h2>Do Not Disturb Mode</h2>
+        <p class="description">Configure rules to automatically hide or silence emails during specific times or from specific senders.</p>
+        
+        <div class="dnd-rules" id="dndRules">
+          <!-- DND rules will be populated by JS -->
+        </div>
+        
+        <button class="add-btn" id="addDNDRule">+ Add DND Rule</button>
+        <button class="save-btn" id="saveDNDRules">Save DND Rules</button>
+      </div>
+    </div>
+
+    <!-- Auto-Delete Tab -->
+    <div class="tab-content" id="auto-delete-tab">
+      <div class="section">
+        <h2>Auto-Delete Settings</h2>
+        <p class="description">Automatically delete old emails based on age and category.</p>
+        
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" id="autoDeleteEnabled">
+            Enable auto-delete for old emails
+          </label>
+        </div>
+
+        <div class="setting-group">
+          <h3>Delete emails older than:</h3>
+          <div class="setting-item">
+            <label>
+              <input type="checkbox" id="delete3Months">
+              3 months
+            </label>
+          </div>
+          <div class="setting-item">
+            <label>
+              <input type="checkbox" id="delete6Months">
+              6 months
+            </label>
+          </div>
+          <div class="setting-item">
+            <label>
+              <input type="checkbox" id="delete1Year">
+              1 year
+            </label>
+          </div>
+        </div>
+
+        <button class="save-btn" id="saveAutoDelete">Save Auto-Delete Settings</button>
+      </div>
+    </div>
+
+    <!-- General Tab -->
+    <div class="tab-content" id="general-tab">
+      <div class="section">
+        <h2>General Settings</h2>
+        
+        <div class="setting-item">
+          <label for="contextWindow">Context Window (days):</label>
+          <input type="number" id="contextWindow" min="1" max="365" value="7">
+          <small>Free tier limited to 7 days</small>
+        </div>
+
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" id="showPriorityColors">
+            Show priority colors in Gmail
+          </label>
+        </div>
+
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" id="showCategoryBadges">
+            Show category badges
+          </label>
+        </div>
+
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" id="enableThreadSummary">
+            Enable thread summary popup
+          </label>
+        </div>
+
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" id="reorderByPriority">
+            Reorder emails by priority in inbox
+          </label>
+          <small>Automatically sort emails with highest priority first (may cause overlays to flicker)</small>
+        </div>
+
+        <button class="save-btn" id="saveGeneral">Save General Settings</button>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>AgileEmails v1.0.0 | <a href="#" id="privacyLink">Privacy Policy</a> | <a href="#" id="supportLink">Support</a></p>
+    </div>
+  </div>
+
+  <script src="emailClassifier.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>
+
+
