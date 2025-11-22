@@ -18,8 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const refreshBtn = document.getElementById('refreshQueue');
     const settingsBtn = document.getElementById('settingsBtn');
     const upgradeBtn = document.getElementById('upgradeBtn');
+    const fastClassifyBtn = document.getElementById('fastClassifyBtn');
     const priorityFilter = document.getElementById('priorityFilter');
-    
+
     if (refreshBtn) {
       refreshBtn.addEventListener('click', loadEmailQueue);
     }
@@ -31,6 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (upgradeBtn) {
       upgradeBtn.addEventListener('click', () => {
         chrome.runtime.openOptionsPage();
+      });
+    }
+    if (fastClassifyBtn) {
+      fastClassifyBtn.addEventListener('click', () => {
+        chrome.tabs.create({ url: chrome.runtime.getURL('fastclassify.html') });
       });
     }
     if (priorityFilter) {
