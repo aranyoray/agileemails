@@ -467,18 +467,18 @@ function applyVisualIndicators(emails, settings) {
       
       const priorityColor = classifier.getPriorityColor(data.priority);
       const priorityLabels = {
-        5: 'URGENT',
-        4: 'HIGH',
-        3: 'MEDIUM',
-        2: 'LOW',
-        1: 'LOW'
+        1: 'Low',
+        2: 'Normal',
+        3: 'Medium',
+        4: 'High',
+        5: 'Urgent'
       };
-      
+
       // Build overlay content
       let overlayHTML = `
         <div class="agileemails-priority-indicator" style="background-color: ${priorityColor}">
           <span class="agileemails-priority-number">${data.priority}</span>
-          <span class="agileemails-priority-label">${priorityLabels[data.priority] || 'MEDIUM'}</span>
+          <span class="agileemails-priority-label">${priorityLabels[data.priority] || 'Low'}</span>
         </div>
       `;
       
@@ -785,17 +785,17 @@ function applyOverlayToElement(element, emailData, settings) {
     
     const priorityColor = classifier.getPriorityColor(emailData.priority);
     const priorityLabels = {
-      5: 'URGENT',
-      4: 'HIGH',
-      3: 'MEDIUM',
-      2: 'LOW',
-      1: 'LOW'
+      1: 'Low',
+      2: 'Normal',
+      3: 'Medium',
+      4: 'High',
+      5: 'Urgent'
     };
-    
+
     let overlayHTML = `
       <div class="agileemails-priority-indicator" style="background-color: ${priorityColor}">
         <span class="agileemails-priority-number">${emailData.priority}</span>
-        <span class="agileemails-priority-label">${priorityLabels[emailData.priority] || 'MEDIUM'}</span>
+        <span class="agileemails-priority-label">${priorityLabels[emailData.priority] || 'Low'}</span>
       </div>
     `;
     
@@ -888,11 +888,11 @@ function showThreadSummary(emailData, element) {
 
     const priorityColor = classifier.getPriorityColor(emailData.priority);
     const priorityLabels = {
-      5: 'Urgent',
-      4: 'High',
+      1: 'Low',
+      2: 'Normal',
       3: 'Medium',
-      2: 'Low',
-      1: 'Low'
+      4: 'High',
+      5: 'Urgent'
     };
 
     let summaryHTML = `
