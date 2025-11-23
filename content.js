@@ -570,7 +570,7 @@ function applyVisualIndicators(emails, settings) {
         if (subjectEl && !subjectEl.querySelector('.agileemails-priority-badge')) {
           const priorityBadge = document.createElement('span');
           priorityBadge.className = 'agileemails-priority-badge';
-          priorityBadge.textContent = `P${data.priority}`;
+          priorityBadge.textContent = `${data.priority}`;
           priorityBadge.style.cssText = `
             display: inline-block;
             padding: 1px 4px;
