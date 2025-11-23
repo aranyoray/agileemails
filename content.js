@@ -496,9 +496,6 @@ function applyVisualIndicators(emails, settings) {
       // Add important info if available
       if (data.importantInfo) {
         const infoItems = [];
-        if (data.importantInfo.dates && data.importantInfo.dates.length > 0) {
-          infoItems.push(`📅 ${data.importantInfo.dates[0]}`);
-        }
         if (data.importantInfo.money && data.importantInfo.money.length > 0) {
           infoItems.push(`💰 ${data.importantInfo.money[0]}`);
         }
@@ -861,9 +858,6 @@ function applyOverlayToElement(element, emailData, settings) {
     
     if (emailData.importantInfo) {
       const infoItems = [];
-      if (emailData.importantInfo.dates && emailData.importantInfo.dates.length > 0) {
-        infoItems.push(`📅 ${emailData.importantInfo.dates[0]}`);
-      }
       if (emailData.importantInfo.money && emailData.importantInfo.money.length > 0) {
         infoItems.push(`💰 ${emailData.importantInfo.money[0]}`);
       }
@@ -970,15 +964,6 @@ function showThreadSummary(emailData, element) {
 
     // Add important info if available
     if (emailData.importantInfo) {
-      if (emailData.importantInfo.dates && emailData.importantInfo.dates.length > 0) {
-        summaryHTML += `
-          <div class="summary-section">
-            <strong>Dates mentioned:</strong>
-            <ul>${emailData.importantInfo.dates.slice(0, 5).map(d => `<li>${escapeHtmlContent(d)}</li>`).join('')}</ul>
-          </div>
-        `;
-      }
-
       if (emailData.importantInfo.money && emailData.importantInfo.money.length > 0) {
         summaryHTML += `
           <div class="summary-section">

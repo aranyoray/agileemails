@@ -156,16 +156,7 @@ class EmailClassifier {
       };
     }
 
-    // Check for newsletter patterns (subject + sender only)
-    isNewsletter = this.isNewsletterQuick(from, subject);
-    if (isNewsletter && !subject.includes('invoice') && !subject.includes('payment') && !subject.includes('receipt')) {
-      return {
-        category: 'newsletter',
-        priority: 1,
-        isNewsletter: true,
-        confidence: 10
-      };
-    }
+    // Newsletter check moved to after body is available (see below)
 
     // Try classification with subject + sender only (FAST PATH)
     const quickResult = this.classifyWithText(from, subject, '', emailDomain, senderName);
@@ -177,6 +168,17 @@ class EmailClassifier {
       // Not confident enough, need to check body progressively
       const body = email.body?.toLowerCase() || '';
       const bodyLines = body.split('\n').filter(line => line.trim().length > 0);
+
+      // Check for newsletter - only if 'unsubscribe' appears in body
+      isNewsletter = this.isNewsletterQuick(from, subject, body);
+      if (isNewsletter && !subject.includes('invoice') && !subject.includes('payment') && !subject.includes('receipt')) {
+        return {
+          category: 'newsletter',
+          priority: 1,
+          isNewsletter: true,
+          confidence: 10
+        };
+      }
       
       // Try with first line of body
       if (bodyLines.length > 0) {
@@ -330,6 +332,12 @@ class EmailClassifier {
     return nonHumanPatterns.some(pattern => from.includes(pattern) || subject.includes(pattern));
   }
 
+  // Quick newsletter check - only returns true if 'unsubscribe' is in email body
+  // This is called after body is available for proper newsletter detection
+  isNewsletterQuick(from, subject, body = '') {
+    // Only consider it a newsletter if 'unsubscribe' appears in the body
+    // This catches mass marketing emails but not school/work newsletters that may need replies
+    return body.toLowerCase().includes('unsubscribe');
   // Quick newsletter check using only sender and subject
   isNewsletterQuick(from, subject) {
     const newsletterIndicators = [
@@ -401,10 +409,11 @@ class EmailClassifier {
   }
 
   isNewsletter(email) {
-    // Use quick check (subject + sender only)
+    // Only consider it a newsletter if 'unsubscribe' appears in body
     const from = email.from?.toLowerCase() || '';
     const subject = email.subject?.toLowerCase() || '';
-    return this.isNewsletterQuick(from, subject);
+    const body = email.body?.toLowerCase() || '';
+    return this.isNewsletterQuick(from, subject, body);
   }
 
   adjustPriorityByHistory(email, currentPriority) {
@@ -438,7 +447,6 @@ class EmailClassifier {
   extractImportantInfo(email) {
     const info = {
       links: [],
-      dates: [],
       money: [],
       tasks: []
     };
@@ -448,10 +456,6 @@ class EmailClassifier {
     // Extract links
     const linkRegex = /https?:\/\/[^\s]+/g;
     info.links = text.match(linkRegex) || [];
-
-    // Extract dates
-    const dateRegex = /\b(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}|\w+\s+\d{1,2},?\s+\d{4}|\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2})\b/g;
-    info.dates = text.match(dateRegex) || [];
 
     // Extract money amounts
     const moneyRegex = /\$[\d,]+\.?\d*/g;
